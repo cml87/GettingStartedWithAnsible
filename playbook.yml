@@ -1,0 +1,11 @@
+---
+# ansible -m copy -a "src=../adhoc/master.gitconfig dest=~/.gitconfig" localhost
+
+- name: run copy task on localhost
+  hosts: localhost
+  tasks:
+  - copy: src="master.gitconfig" dest="~/.gitconfig"
+      #src: "master.gitconfig"
+      #dest: "~/.gitconfig"
+
+
