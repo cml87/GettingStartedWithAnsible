@@ -4,8 +4,8 @@
 - name: run copy task on localhost
   hosts: localhost
   tasks:
-  - copy: src="master.gitconfig" dest="~/.gitconfig"
-      #src: "master.gitconfig"
-      #dest: "~/.gitconfig"
+  - copy:
+      src: "master.gitconfig"
+      dest: "~/.gitconfig"
 
 
