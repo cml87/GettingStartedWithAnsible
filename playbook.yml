@@ -8,4 +8,9 @@
       src: "master.gitconfig"
       dest: "~/.gitconfig"
 
-
+- name: install cheat on localhost
+  hosts: localhost
+  tasks:
+  - pip:
+      name: cheat
+  #- pip: name=cheat   
