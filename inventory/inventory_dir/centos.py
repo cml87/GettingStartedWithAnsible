@@ -8,6 +8,12 @@
 # https://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html
     # specifically about inventory scripts: https://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html#developing-inventory-scripts
 # https://docs.ansible.com/ansible/latest/user_guide/intro_dynamic_inventory.html
+
+
+# I had to run these two commands in the fresh Centos OSs to be able to install git on them with the playbook
+# sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
+# sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+
 import json
 
 # must print a json dictionary, otherwise you'll get an error:
@@ -28,7 +34,7 @@ for i in range(2):
     host = f"centos2{i}"
     inventory["_meta"]["hostvars"][host] = {
         "ansible_host": f"192.168.50.2{i}",
-        "ansible_private_key_file": f".vagrant/machines/{host}/virtualbox/private_key"
+        "ansible_private_key_file": f"vagrants/.vagrant/machines/{host}/virtualbox/private_key"
     }
     inventory["centos"]["hosts"].append(host)
 

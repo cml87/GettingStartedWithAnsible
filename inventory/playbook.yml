@@ -1,5 +1,4 @@
 ---
-
 - name: Ensure git installed
   hosts: centos 
   tags: [ 'install-git' ]
