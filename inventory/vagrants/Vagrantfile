@@ -42,8 +42,8 @@ Vagrant.configure("2") do |config|
     # add vboxmanage customizations here:
     # https://www.vagrantup.com/docs/virtualbox/configuration.html
     # "convenience shortcuts for memory and CPU settings:" (per link above), tweak to your machine's capabilities to speed up VMs:
-      v.memory = 8192
-      v.cpus = 4
+      v.memory = 1024
+      v.cpus = 1
 
   end
 
