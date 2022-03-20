@@ -27,6 +27,7 @@
   - name: show git config output always - verbosity 0 is default for debug module
     debug: var=git_config_before # This just prints this variable. How to use variables!
                                  # Useful when we forget to add the verbosity flag
+  
   - name: tried and true copy module with master.gitconfig from previously in the course 
     copy: src=master.gitconfig dest=~/.gitconfig
   
