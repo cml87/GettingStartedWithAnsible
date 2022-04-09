@@ -64,39 +64,106 @@ Ansible has a centralized architecture. Only the central node must have Ansible 
 
 ## Ansible plugins
 Ansible plugins augment Ansible's core functionalities. Plugins run in the control node within the Ansible process.
-Plugins are divided in the following categories (as of )
-- become: Responsible for enabling Ansible to obtain super-user access (for example, through sudo)
+Plugins are divided in the following <u>categories</u> (as of 2020)
+- <b>become</b>: Responsible for enabling Ansible to obtain super-user access (for example, through sudo)
 - cache: Responsible for caching facts (like system properties) retrieved from backend systems to improve automation performance
 - callback: Allows you to add new behaviors when responding to events —for example, changing the format data is printed out in the output of an Ansible
 playbook run.
 - cliconf: Provides abstractions to the command-line interfaces of various network devices, giving Ansible a standard interface to operate on.
-- connection: Provides connectivity from Ansible to remote systems (for example, over SSH, WinRM, Docker, and many more)
+- <b>connection</b>: Provides connectivity from Ansible to remote systems (for example, over SSH, WinRM, Docker, and many more)
 - httpapi: Tells Ansible how to interact with a remote system's API (for example, for a Fortinet firewall)
-- inventory: Provides Ansible with the ability to parse various static and dynamic inventory formats.
-
+- <b>inventory</b>: Provides Ansible with the ability to parse various static and dynamic inventory formats.
 - lookup: Allows Ansible to look up data from an external source (for example, by reading a flat text file)
+- <b>module</b>: another type of Ansible plugin ...
 - netconf: Provides Ansible with abstractions to enable it to work with NETCONF-enabled networking devices.
 - shell: Provides Ansible with the ability to work with various shells on different systems (for example, powershell on Windows versus sh on Linux)
 - strategy: Provides plugins to Ansible with different execution strategies (for example, the debug strategy, Playbooks and Roles)
 - vars: Provides Ansible with the ability to source variables from certain sources, such as the host_vars and group_vars directories,
 Defining Your Inventory)
 
+We can list all the installed plugins under one category with
+```shell
+$ ansible-doc -t connection -l  // list all plugins of type 'connection'
+[WARNING]: Collection ibm.qradar does not support Ansible version 2.12.2
+[WARNING]: Collection splunk.es does not support Ansible version 2.12.2
+[WARNING]: Collection frr.frr does not support Ansible version 2.12.2
+ansible.netcommon.httpapi      Use httpapi to run command on network appliances                                                                                                          
+ansible.netcommon.libssh       (Tech preview) Run tasks using libssh for ssh connection                                                                                                  
+ansible.netcommon.napalm       Provides persistent connection using NAPALM                                                                                                               
+ansible.netcommon.netconf      Provides a persistent connection using the netconf protocol                                                                                               
+ansible.netcommon.network_cli  Use network_cli to run command on network appliances                                                                                                      
+ansible.netcommon.persistent   Use a persistent unix socket for connection                                                                                                               
+community.aws.aws_ssm          execute via AWS Systems Manager 
+...
+```
+We can get help about an specific plugin in one category with
+```shell
+$ ansible-doc -t connections ssh // get help about the connection plugin 'ssh'
+```
+
+## Ansible adhoc command
+The example:
+```shell
+$ ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" [--check] [--diff] localhost
+```
+is an example of Ansible adhoc command using the Ansible module <code>copy</code>. One of the most common options used with it are:
+
+ -C, --check &emsp;          don't make any changes; instead, try to predict some of the changes that may occur  
+ -D, --diff  &emsp;        when changing (small) files and templates, show the differences in those files; works great with --check
+
 
 ## Ansible modules
-Ansible modules are well made and tested Python scripts. Modules execute in the managed nodes.
+A module is a type of plugin. Ansible modules are well made and tested Python scripts designed to accomplish a set of operations in a given domain-of-things, for example the <code>copy</code> module. Modules execute in the managed nodes:
+```shell
+$ ansible-doc -t module -l
+$ ansible-doc copy  //equivalent to "ansible-doc -t module copy", get help about the 'copy' module
+```
 
-ljkjkjlkj
+With the Ansible adhoc command we can use the <code>copy</code> module as
+```shell
+$ ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" localhost
+$ ansible -m homebrew -a "name=bat state=latest" localhost // install the "bat" command, latest version in localhost (desired stated)
+```
+Here we target "localhost".
+
+In the example above the <u>desired state</u> is to have the specific source file in the specific destination file. Ansible will achieve this desired state whatever the <u>initial conditions</u> are:
+- destination file exists and is identical (sha1) -> nothing will be done
+- destination file exists but is different -> the source file will be copied to the destination file
+- destination file does not exits -> the source file will be copied to the destination file
+
+The <code>copy</code> module is an example of <u>idenpotent</u> module. It will give the same result regardless the number of re-runs.
+Not all Ansible modules are idenpotent. For example, <code>comand</code> and <code>debug</code> are not; they don't ensure any specific state, they just show something.
+
+Ansible modules are normally called inside task of Ansible <u>playbooks</u>.
 
 
+# Ansible playbooks
+Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are more inefficient, as each time one is executed they need to gather information about the system, for example. In a playbook the information is only gathered once.
 
+```bash
+# playbook.yml
+- name: Ensure gitconfig is copied   ## a play
+  hosts: localhost 
+  tasks:                              ## list of tasks
+  - name: run the copy module         ## name of the task
+  - copy: src="master.gitconfig" dest="~/.gitconfig"  ## module or action
 
+  - name: run the copy module again
+  - copy:                           ## module or action?
+      src: "master.gitconfig"       ## arg
+      dest: "~/.gitconfig"          ## arg
+      follow: yes                   ## arg
+    become: yes             ##parameter
 
-## Ansible modules
+```
 
+i
 ## Ansible galaxy
 
 
 
+___________________
+___________________
 
 
 ## Spin up Ansible multi VM lab with Vagrant
