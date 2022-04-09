@@ -1,4 +1,27 @@
-# Spin up Ansible multi VM lab with Vagrant
+# Ansible
+
+Ansible is an automation tool, similar to Chef, Puppet and SaltStack. In <b>enterprise environments</b>, it is used to:
+1. Automatize pipelines in a reliable way.
+2. Automatize configuration of any environment: VMs, containers, pods, etc.
+3. Aid in build and deploys tools, with other tools such as Jenkins
+4. Abstract the communication with all the environments it can work with: VMs, containers, etc
+
+We can think of different degrees of automation: bash scripts, Ansible adhoc commands, Ansible playbooks.
+A bash script is <b>imperative</b>, as we must explicitly specify what we want to do in order to achieve a <u>desired state</u>; we most specify the <i>how</i> and adapt it to the <u>initial state</u> we have. Ansible is <b>declarative</b>, as we only must specify the desired state. This let us focus in our goal, Ansible will take care of the <i>how</i>!
+
+
+
+
+
+## Ansible modules
+
+## Ansible galaxy
+
+
+
+
+
+## Spin up Ansible multi VM lab with Vagrant
 
 - Vagrant makes it easy to spin up VMs (in this case using virtualbox and pre-built vagrant boxes for ubuntu and centos)
 
