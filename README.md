@@ -138,24 +138,47 @@ Ansible modules are normally called inside task of Ansible <u>playbooks</u>.
 
 
 # Ansible playbooks
-Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are more inefficient, as each time one is executed they need to gather information about the system, for example. In a playbook the information is only gathered once.
+Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are more inefficient, as each time one is executed it's gathered information about the system, for example. In a playbook the information is only gathered once.
 
 ```bash
-# playbook.yml
-- name: Ensure gitconfig is copied   ## a play
-  hosts: localhost 
+# mySimplePlaybook.yml
+- name: Play number 1  ## a play
+  hosts: localhost  ## ?? parameter
   tasks:                              ## list of tasks
   - name: run the copy module         ## name of the task
-  - copy: src="master.gitconfig" dest="~/.gitconfig"  ## module or action
+    copy: src="~/t1/file.txt" dest="~/t2"  ## module or action
 
   - name: run the copy module again
-  - copy:                           ## module or action?
-      src: "master.gitconfig"       ## arg
-      dest: "~/.gitconfig"          ## arg
-      follow: yes                   ## arg
+    copy:                           ## module or action?
+      src: "~/t1/file.txt"       ## arg
+      dest: "~/t2"               ## arg
+      follow: yes                ## arg
+
+- name: Play number 2
+  hosts: localhost
+  gather_facts: false  ## ?? parameter
+  tasks:  
+    - name: git_config module simplifies listing configuration 
+      git_config: list_all=yes scope=global
 ```
 
-i
+In general a playbook has a set of plays, each with a name, and each play has a 'tasks' field. Under the tasks field we specify different named tasks (or actions). A task can be a call to a module, buy may be something else, it seems. We execute a playbook with the <code>ansible-playbook</code> command:
+```shell
+$ ansible-playbook mySimplePlaybook.yml [-v, -vvv, --diff, --check]
+```
+
+Each play in a playbook will run the "Gathering Facts" task by default as the first one, which gather info about all the nodes Ansible has discovered at the time the playbook is run. This task runs the <code>setup</code> module, (<code>$ ansible-doc setup</code>). To disable it use the parameter <code>gather_facts: false</code> at play level.
+
+```shell
+$ ansible -m setup localhost
+$ ansible all -m ansible.builtin.setup --tree /tmp/facts # Display facts from all hosts and store them indexed by I(hostname) at C(/tmp/facts).
+```
+
+Task of a play may need these facts, so we may encounter some problems if we disable it.
+
+Ansible playbooks must follow strict yml formatting rules. See yaml.org
+
+
 ## Ansible galaxy
 
 
