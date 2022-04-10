@@ -65,7 +65,7 @@ Ansible has a centralized architecture. Only the central node must have Ansible 
 ## Ansible plugins
 Ansible plugins augment Ansible's core functionalities. Plugins run in the control node within the Ansible process.
 Plugins are divided in the following <u>categories</u> (as of 2020)
-- <b>become</b>: Responsible for enabling Ansible to obtain super-user access (for example, through sudo)
+- <b>become</b>: Responsible for enabling Ansible to obtain super-user access (for example, through sudo). See  https://docs.ansible.com/ansible/latest/user_guide/become.html. Don't know how to use it.
 - cache: Responsible for caching facts (like system properties) retrieved from backend systems to improve automation performance
 - callback: Allows you to add new behaviors when responding to events —for example, changing the format data is printed out in the output of an Ansible
 playbook run.
@@ -108,9 +108,9 @@ $ ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" [--check] [--diff]
 ```
 is an example of Ansible adhoc command using the Ansible module <code>copy</code>. One of the most common options used with it are:
 
- -C, --check &emsp;          don't make any changes; instead, try to predict some of the changes that may occur  
+ -C, --check &emsp;         dry-run. Don't make any changes; instead, try to predict some of the changes that may occur  
  -D, --diff  &emsp;        when changing (small) files and templates, show the differences in those files; works great with --check
-
+-v, -vv, -vvv  &emsp;  use for different levels of verbosity
 
 ## Ansible modules
 A module is a type of plugin. Ansible modules are well made and tested Python scripts designed to accomplish a set of operations in a given domain-of-things, for example the <code>copy</code> module. Modules execute in the managed nodes:
@@ -153,8 +153,6 @@ Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc 
       src: "master.gitconfig"       ## arg
       dest: "~/.gitconfig"          ## arg
       follow: yes                   ## arg
-    become: yes             ##parameter, # https://docs.ansible.com/ansible/latest/user_guide/become.html
-
 ```
 
 i

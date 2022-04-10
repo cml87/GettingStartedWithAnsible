@@ -1,0 +1,13 @@
+---
+- name: Play number 1  ## a play
+  hosts: localhost 
+  tasks:                              ## list of tasks
+  - name: run the copy module         ## name of the task
+    copy: src="~/t1/file.txt" dest="~/t2"  ## module or action
+
+  - name: run the copy module again
+    copy:                           ## module or action?
+      src: "~/t1/file.txt"       ## arg
+      dest: "~/t2"          ## arg
+      follow: yes                   ## arg
+  ##  become: yes             ##parameter, # https://docs.ansible.com/ansible/latest/user_guide/become.html
