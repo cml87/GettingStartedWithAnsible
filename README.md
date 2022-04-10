@@ -153,7 +153,7 @@ Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc 
       src: "master.gitconfig"       ## arg
       dest: "~/.gitconfig"          ## arg
       follow: yes                   ## arg
-    become: yes             ##parameter
+    become: yes             ##parameter, # https://docs.ansible.com/ansible/latest/user_guide/become.html
 
 ```
 
