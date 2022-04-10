@@ -178,6 +178,8 @@ Task of a play may need these facts, so we may encounter some problems if we dis
 
 Ansible playbooks must follow strict yml formatting rules. See yaml.org
 
+## Ansible inventory
+
 
 ## Ansible galaxy
 
