@@ -134,8 +134,11 @@ In the example above the <u>desired state</u> is to have the specific source fil
 The <code>copy</code> module is an example of <u>idenpotent</u> module. It will give the same result regardless the number of re-runs.
 Not all Ansible modules are idenpotent. For example, <code>comand</code> and <code>debug</code> are not; they don't ensure any specific state, they just show something.
 
-Ansible modules are normally called inside task of Ansible <u>playbooks</u>.
+Ansible modules are normally called inside task of Ansible <u>playbooks</u>. Normally, Ansible modules will return something, either we execute them with the Ansible adhoc command or in a playbook. See the documentation. They will return a json we can see using the  <code>-v</code> option.
 
+```shell
+$ ansible-playbook mySimplePlaybook.yml -v
+```
 
 # Ansible playbooks
 Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are more inefficient, as each time one is executed it's gathered information about the system, for example. In a playbook the information is only gathered once.
@@ -183,7 +186,17 @@ Ansible playbooks must follow strict yml formatting rules. See yaml.org
 
 ## Ansible galaxy
 
+## Vagrant. 
 
+"Vagrant Crash Course: Vagrant for Beginners"
+
+Vagrant is a CLI tool to provision, automate and manage VMs, what we normally do with VirtualBox GUI. It's an environment container similar to docker. Vagrant needs some hypervisor installed, such as VMware, KVM, Microsoft Hyper V or Virtual Box.
+
+We create a <b>vagrant file</b> with the command
+```shell
+$ vagrant init ubuntu/trusty64
+```
+Here "ubuntu/trusty64" is called a <b>vagrant box</b>, similar to a docker image. A vagrant file is ..
 
 ___________________
 ___________________
