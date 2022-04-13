@@ -196,7 +196,43 @@ We create a <b>vagrant file</b> with the command
 ```shell
 $ vagrant init ubuntu/trusty64
 ```
-Here "ubuntu/trusty64" is called a <b>vagrant box</b>, similar to a docker image. A vagrant file is ..
+Here "ubuntu/trusty64" is called a <b>vagrant box</b>, similar to a docker image. A vagrant file is a configuration file for a vagrant box. It is written in <b>Ruby</b>. In this file we completely configure the VM we'll later fire up, eg: ram, memory, CPUs etc.
+
+Vagrant boxes are downloaded from online repositories. There is a default public repository somewhere ?. Some instructions in a Vagrant file may be:
+```shell
+config.vm.box="ubuntu/trusty64"
+config.vm.box_version="1.1.0"
+config.vm.box_url="http:// ..."
+```
+This is an example of Vagrant file to provision 4 VMs.
+```shell
+Vagrant.configure("2") do |config|
+## the default hypervisor will be VirtualBox
+  ## 2 ubuntu VMs 
+  (10..11).each do |i|
+    config.vm.define "ubuntu#{i}" do | ubuntu |
+      ubuntu.vm.box = "ubuntu/bionic64"
+      ubuntu.vm.network "private_network", ip: "192.168.50.#{i}"
+    end
+  end 
+
+  ## 2 centos VMs
+  (20..21).each do |i|
+    config.vm.define "centos#{i}" do | centos |
+      centos.vm.box = "centos/8"
+      centos.vm.network "private_network", ip: "192.168.50.#{i}"
+    end
+  end
+```
+We fire up a Vagrant box(s), or VMs, running from the dir having the Vagrant file:
+```shell
+$ vagrant up
+```
+
+
+
+
+
 
 ___________________
 ___________________
