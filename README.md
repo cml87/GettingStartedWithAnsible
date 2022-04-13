@@ -1,9 +1,9 @@
 # Ansible
-These are my Ansible notes from the course <span style="color:aquamarine">Getting started with Ansible</span>, from Pluralsight.
-
-I will also take info from:
-<span style="color:aquamarine">Practical Ansible 2, Automate infrastructure, manage configuration, and deploy applications with Ansible 2.9</span>
-, by Daniel Oh, James Freeman and Fabio Alessandro Locati.
+These are my notes for DevOps stuffs. I will include info from the following courses
+- <span style="color:aquamarine">Getting Started with Ansible</span>, by Wes Higbee, **pluralsight**.
+- <span style="color:aquamarine">Ansible and DevOps Integrations: The Big Picture</span>. by Saravanan Dhandapani, **pluralsight**
+- <span style="color:aquamarine">Practical Ansible 2, Automate infrastructure, manage configuration, and deploy applications with Ansible 2.9</span>
+, by Daniel Oh, James Freeman and Fabio Alessandro Locati. Book
 
 
 Ansible is an automation tool, similar to Chef, Puppet and SaltStack. In <b>enterprise environments</b>, it is used to:
