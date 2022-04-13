@@ -318,7 +318,7 @@ $ ls
 $ logout
 ```
 
-Each Vagrant box will have a public ssh key copied ad <code>/.ssh/authorized_keys</code>. The corresponding private key will be in the host (our pc), and can be seen under "Identify key" with <code>$ vagrant ssh-config</code>, eg:
+Each Vagrant box will have a public ssh key copied at <code>/.ssh/authorized_keys</code>. The corresponding private key will be in the host (our pc), and can be seen under "Identify key" with <code>$ vagrant ssh-config</code>, eg:
 ```shell
 /home/pepito/vagrant/.vagrant/machines/default/virtualbox/private_key
 ``` 
@@ -332,6 +332,8 @@ $ vagrant destroy  // delete the VMs, we should power off them first
 $ vagrant reload   // reload the VMs after editing the settings in the Vagrant file
 ```
 All these commands support options as well as specifying the target VM. See <code>--help</code>. 
+
+Vagrant has integration with Ansible. See "Ansible (Local) Provisioner" 
 
 End Min 18:42
 
