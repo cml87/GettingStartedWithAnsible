@@ -331,7 +331,9 @@ $ vagrant halt     // switch off the VMs, go to "Powered Off"
 $ vagrant destroy  // delete the VMs, we should power off them first
 $ vagrant reload   // reload the VMs after editing the settings in the Vagrant file
 ```
-All these commands support options as well as specifying the target VM. See <code>--help</code>.
+All these commands support options as well as specifying the target VM. See <code>--help</code>. 
+
+End Min 18:42
 
 
 
