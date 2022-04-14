@@ -413,7 +413,7 @@ end
 Normally we will communicate with Vagrant VMs through ssh. There will be a default port mapping for this
 <code>22(guest)=>2222(host)</code>. The default username/password is vagrant/vagrant.
 ```shell
-$ vagrant ssh-config    // run on the host. Display all ssh configuration
+$ vagrant ssh-config    ## run on the host. Display all ssh configuration
 $ vagrant ssh
 $ ls
 $ logout
@@ -426,11 +426,11 @@ Each Vagrant box will have a public ssh key copied at <code>/.ssh/authorized_key
 
 All Vagrant commands need a Vagrant file to work against. We may omit it if we run the command from the same dir where the Vagrant file is. Some useful Vagrant commands are:
 ```shell
-$ vagrant status   // show the status of the current Vagrant VM (defined in the Vagrant file)
-$ vagrant suspend  // suspends the VMs, goes from "Running" to "Saved state"
-$ vagrant halt     // switch off the VMs, go to "Powered Off"
-$ vagrant destroy  // delete the VMs, we should power off them first
-$ vagrant reload   // reload the VMs after editing the settings in the Vagrant file
+$ vagrant status   ## show the status of the current Vagrant VM (defined in the Vagrant file)
+$ vagrant suspend  ## suspends the VMs, goes from "Running" to "Saved state"
+$ vagrant halt     ## switch off the VMs, go to "Powered Off"
+$ vagrant destroy  ## delete the VMs, we should power off them first
+$ vagrant reload   ## reload the VMs after editing the settings in the Vagrant file
 ```
 All these commands support options as well as specifying the target VM. See <code>--help</code>. 
 
