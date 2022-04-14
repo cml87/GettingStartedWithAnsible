@@ -236,7 +236,7 @@ inventory=inventory_dir
 Once in a directory defining and inventory we can use the <code>ansible-inventory</code> command to peruse it:
 ```shell
 $ ansible-inventory --list
-$ ansible-inventory --list --yaml  // prints out the inventory in a yml file
+$ ansible-inventory --list --yaml  ## prints out the inventory in a yml file
 $ ansible-inventory --host ubuntu10
 $ ansible-inventory --graph
 $ ansible-inventory --graph --vars
