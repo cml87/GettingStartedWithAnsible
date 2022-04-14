@@ -140,6 +140,13 @@ Ansible modules are normally called inside task of Ansible <u>playbooks</u>. Nor
 $ ansible-playbook mySimplePlaybook.yml -v
 ```
 
+Ansible modules are Python scripts. Therefore, in order to be run in a given node, the node must have a Python interpreter installed, and the node configuration must specify where it is. Otherwise Ansible will try to find it in some default location.  In an ini host definition for the node "localhost" we can set
+```text
+# ini format for configuring access to localhost as a target 
+localhost ansible_connection="local" ansible_python_interpreter="/usr/local/bin/python3"
+``` 
+
+
 # Ansible playbooks
 Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are more inefficient, as each time one is executed it's gathered information about the system, for example. In a playbook the information is only gathered once.
 
@@ -182,9 +189,103 @@ Task of a play may need these facts, so we may encounter some problems if we dis
 Ansible playbooks must follow strict yml formatting rules. See yaml.org
 
 ## Ansible inventory
+An Ansible inventory is a list of the different nodes we would like to manage with Ansible. We must pass the inventory to the Ansible adhoc command or the Ansible playbook command.
+
+There are different ways to configure and inventory, and we can combine all of them to build a same inventory, as in the example below:
+- python script, eg: centos.py
+- ini file, eg: explicit localhost. But don't use the .ini extension as it will be ignored by default
+- group file, eg: group-ubuntu
+- yml file, this is the preferred way
+
+A group is a way to coalesce nodes together so that they can be targeted with Ansible commands and configured as a whole. One node can be part of more than one group. 
+
+In an inventory directory there are some extensions that will be ignored: .org, .ini, .cfg, .retry. See <code>ansible-config</code>. We can used them to exclude host files of an inventory, for example.
+```shell
+$ ansible-config list | grep -A 5 INVENTORY_IGNORE
+INVENTORY_IGNORE_EXTS:
+  default: '{{(REJECT_EXTS + (''.orig'', ''.ini'', ''.cfg'', ''.retry''))}}'
+```
+
+We can define an inventory with a config file and an inventory directory. The inventory directory can combine different approaches to build the same inventory, for example python scripts and yaml files. However, normally we use only one approach, preferably yaml file. Here is an example:
+```shell
+... /inventory (master)$ tree .   // a directory defining and inventory
+.
+├── ansible.cfg
+├── inventory_dir
+    ├── centos.py
+    ├── explicit-localhost
+    ├── group-ubuntu
+    ├── group-vagrant
+    ├── ubuntu10
+    ├── ubuntu11-and-12.yml
+    └── windows-too.orig
+```
+The "ansible.cfg" file will have as content:
+```text
+$ ansible-config view     // or cat ansible.cfg 
+[defaults]
+# disable host_key_checking
+# https://docs.ansible.com/ansible/latest/user_guide/connection_details.html#host-key-checking
+host_key_checking = True
+
+inventory=inventory_dir
+# inventory=inventory_file # use -i or env var ANSIBLE_INVENTORY to override
+# FYI `vagrant ssh-config` is a great guide for configuring ansible to connect directly to VMs created by vagrant
+```
+
+Once in a directory defining and inventory we can use the <code>ansible-inventory</code> command to peruse it:
+```shell
+$ ansible-inventory --list
+$ ansible-inventory --list --yaml  // prints out the inventory in a yml file
+$ ansible-inventory --host ubuntu10
+$ ansible-inventory --graph
+$ ansible-inventory --graph --vars
+
+$ ansible-inventory --graph
+@all:
+  |--@ungrouped:
+  |  |--localhost
+  |--@vagrant:
+  |  |--@centos:
+  |  |  |--centos20
+  |  |  |--centos21
+  |  |--@ubuntu:
+  |  |  |--ubuntu10
+  |  |  |--ubuntu11
+```
+```shell
+$ ansible -m ping ubuntu10  ## makes a ping and shows where is the node's Python interpreter
+```
+
+We can define all the inventory in one yaml (or yml, it's the same) file and do
+```shell
+$ ansible-inventory -i hosts.yml --graph
+```
+We can also use the environment variable ANSIBLE_INVENTORY. Ansible environment variables will override config files, but not cli flags. See "Configuring Ansible". 
+
+Host in an inventory must be identified by an IP in a network, but if they have names associated with them (DNS ?) we can use the names.
+
+Once we have an inventory defined in a given directory of our pc, we can run from it Ansible adhoc commands or <code>ansible-playbook</code> against it as a whole, a group of it, or an specific host of it:
+```shell
+$ ansible -m command -a "git config --global --list" vagrant   ## "vagrant" is the target group of hosts in this case
+```
+
+The module <code>command</code> is the default module called by the Ansible adhoc command, so we can omit it. A more capable alternative is the module <code>shell</code>.
+
 
 
 ## Ansible galaxy
+
+## Ansible molecule
+Ansible molecule is a tool to test Ansible ... ?
+Video "Ansible 101 - Episode 7 - Molecule Testing and Linting and Ansible Galaxy"
+```shell
+$ python -m pip install --user "molecule"
+$ python -m pip install --user "molecule ansible-lint"
+$ python -m pip install --user "molecule-vagrant"
+
+$ molecule --version
+```
 
 ## Vagrant. 
 
