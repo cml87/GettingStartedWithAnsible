@@ -147,7 +147,7 @@ localhost ansible_connection="local" ansible_python_interpreter="/usr/local/bin/
 ``` 
 
 
-# Ansible playbooks
+## Ansible playbooks
 Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are more inefficient, as each time one is executed it's gathered information about the system, for example. In a playbook the information is only gathered once.
 
 ```bash
@@ -177,16 +177,33 @@ In general a playbook has a set of plays, each with a name, and each play has a 
 $ ansible-playbook mySimplePlaybook.yml [-v, -vvv, --diff, --check]
 ```
 
-Each play in a playbook will run the "Gathering Facts" task by default as the first one, which gather info about all the nodes Ansible has discovered at the time the playbook is run. This task runs the <code>setup</code> module, (<code>$ ansible-doc setup</code>). To disable it use the parameter <code>gather_facts: false</code> at play level.
+Each play in a playbook will run the "Gathering Facts" task by default as the first one, which gather info about all the nodes Ansible has discovered at the time the playbook is run (nodes in the inventory being used). This task runs the <code>setup</code> module, (<code>$ ansible-doc setup</code>). To disable it use the parameter <code>gather_facts: false</code> at play level.
 
 ```shell
 $ ansible -m setup localhost
 $ ansible all -m ansible.builtin.setup --tree /tmp/facts # Display facts from all hosts and store them indexed by I(hostname) at C(/tmp/facts).
 ```
 
-Task of a play may need these facts, so we may encounter some problems if we disable it.
+Task of a play may need these facts, so we may encounter some problems if we disable it. We can filter out an specific fact we are interested in about the hosts in our inventory. For example, suppose we want to know the package manager that will be used by each node; we would do:
+```shell
+$ ansible -m setup -a "filter=ansible_pkg_mgr" all  ## look at all nodes in the inventory
+```
 
 Ansible playbooks must follow strict yml formatting rules. See yaml.org
+
+### tags
+
+Tags in a playbook are used to limit the set of task of plays we execute from a playbook, when we call it with <code>ansible-playbook -t</code>. For example, see the following play tagged with <code>[  'install-git'  ]</code>:
+```shell
+- name: Ensure git is installed
+  hosts: centos  ## a group of hosts
+  tags: [  'install-git'  ]
+  tasks:
+    - package: name=git state=latest          ## 'git' is a valid package name for a centos environment, check it!
+      when: ansible_os_family == 'RedHat'     ## 'latest' is a state supported by the package 'git', check it!
+      become: yes
+```
+In this example, the module 'package' calls the specific package manager (yum, apt, etc.) of the environment we are configuring.
 
 ## Ansible inventory
 An Ansible inventory is a list of the different nodes we would like to manage with Ansible. We must pass the inventory to the Ansible adhoc command or the Ansible playbook command.
@@ -287,7 +304,7 @@ $ python -m pip install --user "molecule-vagrant"
 $ molecule --version
 ```
 
-## Vagrant. 
+# Vagrant 
 
 "Vagrant Crash Course: Vagrant for Beginners"
 
