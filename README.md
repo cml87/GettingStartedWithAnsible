@@ -297,12 +297,21 @@ We can also use the environment variable ANSIBLE_INVENTORY. Ansible environment 
 
 Host in an inventory must be identified by an IP in a network, but if they have names associated with them (DNS ?) we can use the names.
 
-The directory from where we run Ansible adhoc, or <code>ansible-playbook</code>, commands, must define an inventory against which we'll run these commands. If not, we will need to pass the inventory with the <code>-i</code> option.  We run these commands against the whole inventory, a group of it, or an specific host of it:
+The directory from where we run Ansible adhoc, or <code>ansible-playbook</code>, commands, must define an inventory against which we'll run these commands. If not, we will need to pass the inventory (directory or file) with the <code>-i</code> option.  We run these commands against the whole inventory, a group of it, or an specific host of it:
 ```shell
 $ ansible -m command -a "git config --global --list" vagrant   ## "vagrant" is the target group of hosts in this case
 ```
+If we pass an inventory directory with <code>-i</code>, Ansible will try to parse all files in there will the purpose of defining an inventory. If it finds files it doesn't understand it will throw errors. 
+
+See "Configuring Ansible" for how to configure an inventory; we'll have three options in general: env variables configuration, command line options and configuration files.
 
 The module <code>command</code> is the default module called by the Ansible adhoc command, so we can omit it. A more capable alternative is the module <code>shell</code>.
+
+## Connecting to Ansible nodes
+Ansible will normally connect to the nodes an inventory through ssh. If we have set <code>host_key_checking=true</code> in our inventory config files, we'll need to tell Ansible where it is the private key the control node will use to connect to the managed nodes in the inventory. Look for this info, for each inventory host, at the output of:
+```shell
+$ ansible-inventory --graph --vars 
+```
 
 
 
