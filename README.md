@@ -189,6 +189,17 @@ Task of a play may need these facts, so we may encounter some problems if we dis
 $ ansible -m setup -a "filter=ansible_pkg_mgr" all  ## consider all nodes in the inventory
 ```
 
+xxxxxx
+When we re run Vagrant o vreate new VMs with the same names at the same ips Ansible was looking at them before, we need to remove them in knwonw host in the host machine, otherwise we will get an error. WE do it with ssh-keygen -f "/home/camilo/.ssh/known_hosts" -R "192.168.50.21" . Here 192.168.50.21 is the ip of the VM for Ansible. MOreover, we will need to set the authenticity of the new fire up machines with
+```shell
+$ ansible -m ping centos21
+The authenticity of host '192.168.50.21 (192.168.50.21)' can't be established.
+ECDSA key fingerprint is SHA256:qe45ynAc/fkEd3gjF/Swsfed2IL2HpBSZ3uxoQRkIe8.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+```
+
+
+
 Ansible playbooks must follow strict yml formatting rules. See yaml.org
 
 ### tags

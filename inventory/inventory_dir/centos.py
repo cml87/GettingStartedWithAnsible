@@ -34,7 +34,7 @@ for i in range(2):
     host = f"centos2{i}"
     inventory["_meta"]["hostvars"][host] = {
         "ansible_host": f"192.168.50.2{i}",
-        "ansible_private_key_file": f"../../vagrants/.vagrant/machines/{host}/virtualbox/private_key"
+        "ansible_private_key_file": f"../vagrants/.vagrant/machines/{host}/virtualbox/private_key"
     }
     inventory["centos"]["hosts"].append(host)
 

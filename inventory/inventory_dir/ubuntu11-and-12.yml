@@ -4,7 +4,7 @@ all:
   hosts: 
     ubuntu11:
       ansible_host: 192.168.50.11 
-      ansible_private_key_file: ../../vagrants/.vagrant/machines/ubuntu11/virtualbox/private_key
+      ansible_private_key_file: ../vagrants/.vagrant/machines/ubuntu11/virtualbox/private_key
       nombre: pepito
 # As an exercise, add a third ubuntu VM in the Vagrantfile and uncomment the following to add it to Ansible's inventory:
 #    ubuntu12:
