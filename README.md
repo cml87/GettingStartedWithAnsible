@@ -186,7 +186,7 @@ $ ansible all -m ansible.builtin.setup --tree /tmp/facts # Display facts from al
 
 Task of a play may need these facts, so we may encounter some problems if we disable it. We can filter out an specific fact we are interested in about the hosts in our inventory. For example, suppose we want to know the package manager that will be used by each node; we would do:
 ```shell
-$ ansible -m setup -a "filter=ansible_pkg_mgr" all  ## look at all nodes in the inventory
+$ ansible -m setup -a "filter=ansible_pkg_mgr" all  ## consider all nodes in the inventory
 ```
 
 Ansible playbooks must follow strict yml formatting rules. See yaml.org
@@ -204,6 +204,14 @@ Tags in a playbook are used to limit the set of task of plays we execute from a 
       become: yes
 ```
 In this example, the module 'package' calls the specific package manager (yum, apt, etc.) of the environment we are configuring.
+
+## Ansible collections
+Ansible collections are set of plugins and modules. 
+```shell
+$ ansible-galaxy collection list
+$ ansible-galaxy collection list install community.general ## collection "community.general" includes module 'community.general.git_config'
+$ ansible-doc git_config
+```
 
 ## Ansible inventory
 An Ansible inventory is a list of the different nodes we would like to manage with Ansible. We must pass the inventory to the Ansible adhoc command or the Ansible playbook command.
@@ -274,6 +282,13 @@ $ ansible-inventory --graph
 $ ansible -m ping ubuntu10  ## makes a ping and shows where is the node's Python interpreter
 ```
 
+There are static and dynamic inventories. Static inventories are defined through ini, or yml, files, for example. Dynamic inventories are defined through Python scrips, for example. See <code>centos.py</code> file. There is also an inventory plugin?
+
+If our inventory, or part of it, is dynamically defined through a Python script, we can printout it with
+```shell
+$ centos.py | jq 
+```
+
 We can define all the inventory in one yaml (or yml, it's the same) file and do
 ```shell
 $ ansible-inventory -i hosts.yml --graph
@@ -282,7 +297,7 @@ We can also use the environment variable ANSIBLE_INVENTORY. Ansible environment 
 
 Host in an inventory must be identified by an IP in a network, but if they have names associated with them (DNS ?) we can use the names.
 
-Once we have an inventory defined in a given directory of our pc, we can run from it Ansible adhoc commands or <code>ansible-playbook</code> against it as a whole, a group of it, or an specific host of it:
+The directory from where we run Ansible adhoc, or <code>ansible-playbook</code>, commands, must define an inventory against which we'll run these commands. If not, we will need to pass the inventory with the <code>-i</code> option.  We run these commands against the whole inventory, a group of it, or an specific host of it:
 ```shell
 $ ansible -m command -a "git config --global --list" vagrant   ## "vagrant" is the target group of hosts in this case
 ```
