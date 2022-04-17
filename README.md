@@ -189,14 +189,7 @@ Task of a play may need these facts, so we may encounter some problems if we dis
 $ ansible -m setup -a "filter=ansible_pkg_mgr" all  ## consider all nodes in the inventory
 ```
 
-xxxxxx
-When we re run Vagrant o vreate new VMs with the same names at the same ips Ansible was looking at them before, we need to remove them in knwonw host in the host machine, otherwise we will get an error. WE do it with ssh-keygen -f "/home/camilo/.ssh/known_hosts" -R "192.168.50.21" . Here 192.168.50.21 is the ip of the VM for Ansible. MOreover, we will need to set the authenticity of the new fire up machines with
-```shell
-$ ansible -m ping centos21
-The authenticity of host '192.168.50.21 (192.168.50.21)' can't be established.
-ECDSA key fingerprint is SHA256:qe45ynAc/fkEd3gjF/Swsfed2IL2HpBSZ3uxoQRkIe8.
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-```
+
 
 
 
@@ -319,12 +312,23 @@ See "Configuring Ansible" for how to configure an inventory; we'll have three op
 The module <code>command</code> is the default module called by the Ansible adhoc command, so we can omit it. A more capable alternative is the module <code>shell</code>.
 
 ## Connecting to Ansible nodes
-Ansible will normally connect to the nodes an inventory through ssh. If we have set <code>host_key_checking=true</code> in our inventory config files, we'll need to tell Ansible where it is the private key the control node will use to connect to the managed nodes in the inventory. Look for this info, for each inventory host, at the output of:
+Ansible will normally connect to the nodes in an inventory through ssh. If we have set <code>host_key_checking=true</code> in our inventory config files, we'll need to tell Ansible where it is the private key the control node will use to connect to the managed nodes in the inventory. Look for this info, for each inventory host, at the output of:
 ```shell
 $ ansible-inventory --graph --vars 
 ```
+The private key for each machine should match what we get with <code>$ vagrant ssh-config</code> under "IdentifyFile" for each machine. In general, Ansible should use the same private key to connect to the nodes, or VMs, Vagrant uses. 
 
-
+When we create with Vagrant new VMs with the same IPs we used before for othre VMs, we'll need to remove these IPs from the known_host file of our pc, otherwise we will get an error, for example, when Ansible tries to connect to them later. We do this with
+```shell
+$ ssh-keygen -f "/home/camilo/.ssh/known_hosts" -R "192.168.50.21"
+```
+Here 192.168.50.21 is the IP of the VM for Ansible configured in the inventory. To set the authenticity of the new VM before running any Ansible command that needs to connect to them we would do
+```shell
+$ ansible -m ping centos21
+The authenticity of host '192.168.50.21 (192.168.50.21)' can't be established.
+ECDSA key fingerprint is SHA256:qe45ynAc/fkEd3gjF/Swsfed2IL2HpBSZ3uxoQRkIe8.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+```
 
 ## Ansible galaxy
 
