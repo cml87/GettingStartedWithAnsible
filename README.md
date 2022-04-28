@@ -7,12 +7,11 @@ These are my notes for DevOps stuffs. I will include info from the following cou
 
 
 Ansible is an automation tool, similar to Chef, Puppet and SaltStack. In <b>enterprise environments</b>, it is used to:
-1. Automatize pipelines in a reliable way.
-2. Automatize configuration of any environment: VMs, containers, pods, etc.
-3. Aid in build and deploys tools, with other tools such as Jenkins
-4. Abstract the communication with all the environments it can work with: VMs, containers, etc
+1. Automatize and abstract the communication and configuration of any environment: VMs, containers, pods, etc.
+2. Automatize pipelines in a reliable way and aid in build and deploys tools.
 
-Ansible can communicate with and manage the following type of nodes, or environments, which normally are remote:
+
+Ansible can communicate with and manage the following type of nodes, or environments, which are normally remote:
 1. VMs, Linux and Windows type
 2. bare metal servers, Linux and Windows
 3. containers, docker
@@ -58,13 +57,13 @@ positional arguments:
 ```
 
 ## Ansible architecture
-Ansible has a centralized architecture. Only the central node must have Ansible installed. All nodes, central and managed, must have a Python interpreter installed, and ansible must know where it is.
+Ansible has a centralized architecture. Only the central node must have Ansible installed. However, all nodes, central and managed, must have a Python interpreter installed, and ansible must know where it is.
 ![image info](./pictures/ansible_architecture.jpg)
 
 
 ## Ansible plugins
 Ansible plugins augment Ansible's core functionalities. Plugins run in the control node within the Ansible process.
-Plugins are divided in the following <u>categories</u> (as of 2020)
+<b><u>Plugins categories</u></b> are (as of 2020):
 - <b>become</b>: Responsible for enabling Ansible to obtain super-user access (for example, through sudo). See  https://docs.ansible.com/ansible/latest/user_guide/become.html. Don't know how to use it.
 - cache: Responsible for caching facts (like system properties) retrieved from backend systems to improve automation performance
 - callback: Allows you to add new behaviors when responding to events —for example, changing the format data is printed out in the output of an Ansible
@@ -74,7 +73,7 @@ playbook run.
 - httpapi: Tells Ansible how to interact with a remote system's API (for example, for a Fortinet firewall)
 - <b>inventory</b>: Provides Ansible with the ability to parse various static and dynamic inventory formats.
 - lookup: Allows Ansible to look up data from an external source (for example, by reading a flat text file)
-- <b>module</b>: another type of Ansible plugin ...
+- <u><b>module</b></u>: another type of Ansible plugin ...
 - netconf: Provides Ansible with abstractions to enable it to work with NETCONF-enabled networking devices.
 - shell: Provides Ansible with the ability to work with various shells on different systems (for example, powershell on Windows versus sh on Linux)
 - strategy: Provides plugins to Ansible with different execution strategies (for example, the debug strategy, Playbooks and Roles)
@@ -83,7 +82,7 @@ Defining Your Inventory)
 
 We can list all the installed plugins under one category with
 ```shell
-$ ansible-doc -t connection -l  // list all plugins of type 'connection'
+$ ansible-doc -t connection -l  ## list all plugins of type 'connection'
 [WARNING]: Collection ibm.qradar does not support Ansible version 2.12.2
 [WARNING]: Collection splunk.es does not support Ansible version 2.12.2
 [WARNING]: Collection frr.frr does not support Ansible version 2.12.2
@@ -98,43 +97,43 @@ community.aws.aws_ssm          execute via AWS Systems Manager
 ```
 We can get help about an specific plugin in one category with
 ```shell
-$ ansible-doc -t connections ssh // get help about the connection plugin 'ssh'
+$ ansible-doc -t connections ssh ## get help about the connection plugin 'ssh'
 ```
 
 ## Ansible adhoc command
-The example:
+The Ansible adhoc command is used to run single, one-shot, Ansible modules against a given host, group of hosts of inventories (see below). For example, the following runs the module <code>copy</code>:
 ```shell
 $ ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" [--check] [--diff] localhost
 ```
-is an example of Ansible adhoc command using the Ansible module <code>copy</code>. One of the most common options used with it are:
+Among the most common options used with the Ansible adhoc command are:
 
  -C, --check &emsp;         dry-run. Don't make any changes; instead, try to predict some of the changes that may occur  
  -D, --diff  &emsp;        when changing (small) files and templates, show the differences in those files; works great with --check
 -v, -vv, -vvv  &emsp;  use for different levels of verbosity
 
 ## Ansible modules
-A module is a type of plugin. Ansible modules are well made and tested Python scripts designed to accomplish a set of operations in a given domain-of-things, for example the <code>copy</code> module. Modules execute in the managed nodes:
+A module is a type of plugin. Ansible modules are well made and tested Python scripts designed to accomplish a set of operations in a given domain-of-things. For example, the <code>copy</code> module is designed to copy files and directories. Modules execute in the managed nodes:
 ```shell
-$ ansible-doc -t module -l
-$ ansible-doc copy  //equivalent to "ansible-doc -t module copy", get help about the 'copy' module
+$ ansible-doc -t module -l ## list all plugins of type 'module'
+$ ansible-doc copy  ## equivalent to "ansible-doc -t module copy", get help about the 'copy' module
 ```
 
 With the Ansible adhoc command we can use the <code>copy</code> module as
 ```shell
 $ ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" localhost
-$ ansible -m homebrew -a "name=bat state=latest" localhost // install the "bat" command, latest version in localhost (desired stated)
+$ ansible -m homebrew -a "name=bat state=latest" localhost ## install the "bat" command, latest version in localhost (desired stated)
 ```
 Here we target "localhost".
 
 In the example above the <u>desired state</u> is to have the specific source file in the specific destination file. Ansible will achieve this desired state whatever the <u>initial conditions</u> are:
 - destination file exists and is identical (sha1) -> nothing will be done
 - destination file exists but is different -> the source file will be copied to the destination file
-- destination file does not exits -> the source file will be copied to the destination file
+- destination file does not exist -> the source file will be copied to the destination file
 
 The <code>copy</code> module is an example of <u>idenpotent</u> module. It will give the same result regardless the number of re-runs.
-Not all Ansible modules are idenpotent. For example, <code>comand</code> and <code>debug</code> are not; they don't ensure any specific state, they just show something.
+Not all Ansible modules are idenpotent. For example, <code>comand</code> and <code>debug</code> are not; they don't ensure any specific state but just show something.
 
-Ansible modules are normally called inside task of Ansible <u>playbooks</u>. Normally, Ansible modules will return something, either we execute them with the Ansible adhoc command or in a playbook. See the documentation. They will return a json we can see using the  <code>-v</code> option.
+Ansible modules are normally called inside task of Ansible <u>playbooks</u>.<br>Normally, Ansible modules will return something, either we execute them with the Ansible adhoc command or in a playbook. See the documentation. They will return a json we can see using the  <code>-v</code> option.
 
 ```shell
 $ ansible-playbook mySimplePlaybook.yml -v
@@ -148,7 +147,7 @@ localhost ansible_connection="local" ansible_python_interpreter="/usr/local/bin/
 
 
 ## Ansible playbooks
-Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are more inefficient, as each time one is executed it's gathered information about the system, for example. In a playbook the information is only gathered once.
+Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc commands. Ansible adhoc commands are inefficient, as each time one is executed it's gathered information about the system, for example. In a playbook the information is only gathered once.
 
 ```bash
 # mySimplePlaybook.yml
