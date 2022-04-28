@@ -26,10 +26,11 @@ A bash script is <b>imperative</b>, as we must explicitly specify what we want t
 Ansible is <b>declarative</b>, as we only must specify the desired state. This let us focus in our goal, Ansible will take care of the <i>how</i> !
 
 ## Install Ansible 
-Ansible is a <b>Python</b> app. We install it with
+Ansible is a <b>Python</b> app and is installed as such. For the current user we install it with (official documentation):
 ```shell
-$ pip list --outdated
-$ pip install -U ansible
+$ python -m pip install --user ansible
+##$ pip list --outdated
+##$ pip install -U ansible
 $ ansible --version
 ansible [core 2.12.2]
   config file = None
@@ -41,6 +42,30 @@ ansible [core 2.12.2]
   jinja version = 3.0.3
   libyaml = True
 ```
+When installed for the current user it will create the following directories and files:
+```shell
+~/.local/lib/python3.8/site-packages/ansible
+~/.local/lib/python3.8/site-packages/ansible_collections/netbox/netbox/docs/js/ansible
+~/.local/lib/python3.8/site-packages/ansible_collections/ansible
+~/.local/lib/python3.8/site-packages/ansible_collections/kubernetes/core/tests/integration/targets/k8s_copy/files/data/ansible
+~/.local/bin/ansible
+```
+All ansible commands (executables) will be in <shell>~/.local/bin</shell>, so this dir must be in the path: 
+```shell
+$ ls ~/.local/bin
+ansible         ansible-connection  ansible-doc     ansible-inventory  ansible-pull  ansible-vault
+ansible-config  ansible-console     ansible-galaxy  ansible-playbook   ansible-test
+```
+
+We can install Ansible in a fresh Ubuntu as well with <shell>apt</shell>:
+```shell
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo add-apt-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+```
+
+
 We can see all the different <u>Ansible commands</u> we have installed. All of them support the <code>-h</code> option. 
 ```shell
 $ ansible //+ \tab
@@ -171,28 +196,25 @@ Ansible modules are meant to be used in Ansible playbooks, not in Ansible adhoc 
       git_config: list_all=yes scope=global
 ```
 
-In general a playbook has a set of plays, each with a name, and each play has a 'tasks' field. Under the tasks field we specify different named tasks (or actions). A task can be a call to a module, buy may be something else, it seems. We execute a playbook with the <code>ansible-playbook</code> command:
+In general, a playbook has a set of plays, each with a name, and each play has a 'tasks' field. Under the tasks field we specify different named tasks (or actions). A task can be a call to a module, buy may be something else, it seems. We execute a playbook with the <code>ansible-playbook</code> command:
 ```shell
 $ ansible-playbook mySimplePlaybook.yml [-v, -vvv, --diff, --check]
 ```
+The target host(s) of each play in the notebook will be specified in the playbook file itself, but these hosts must be defined in an inventory known or passed to the <code>ansible-playbook</code> command somehow (see below).
 
-Each play in a playbook will run the "Gathering Facts" task by default as the first one, which gather info about all the nodes Ansible has discovered at the time the playbook is run (nodes in the inventory being used). This task runs the <code>setup</code> module, (<code>$ ansible-doc setup</code>). To disable it use the parameter <code>gather_facts: false</code> at play level.
+Each play in a playbook will run the "Gathering Facts" task by default as the first one, which gather info about all the nodes Ansible has discovered at the time the playbook is run (nodes in the inventory being used). This task runs the <code>setup</code> module, (<code>$ ansible-doc setup</code>). To disable it, use the parameter <code>gather_facts: false</code> at play level.
 
 ```shell
 $ ansible -m setup localhost
 $ ansible all -m ansible.builtin.setup --tree /tmp/facts # Display facts from all hosts and store them indexed by I(hostname) at C(/tmp/facts).
 ```
 
-Task of a play may need these facts, so we may encounter some problems if we disable it. We can filter out an specific fact we are interested in about the hosts in our inventory. For example, suppose we want to know the package manager that will be used by each node; we would do:
+Task of a play may need these facts, so we may encounter some problems if we disable it. We can filter out a specific fact we are interested in about the hosts in our inventory. For example, suppose we want to know the package manager that will be used by each node; we would do:
 ```shell
 $ ansible -m setup -a "filter=ansible_pkg_mgr" all  ## consider all nodes in the inventory
 ```
 
-
-
-
-
-Ansible playbooks must follow strict yml formatting rules. See yaml.org
+Ansible playbooks must follow strict yml formatting rules. See [yaml.org](https://yaml.org)
 
 ### tags
 
@@ -201,7 +223,7 @@ Tags in a playbook are used to limit the set of task of plays we execute from a 
 - name: Ensure git is installed
   hosts: centos  ## a group of hosts
   tags: [  'install-git'  ]
-  tasks:
+  tasks: ## here we don't name this task
     - package: name=git state=latest          ## 'git' is a valid package name for a centos environment, check it!
       when: ansible_os_family == 'RedHat'     ## 'latest' is a state supported by the package 'git', check it!
       become: yes
@@ -215,6 +237,8 @@ $ ansible-galaxy collection list
 $ ansible-galaxy collection list install community.general ## collection "community.general" includes module 'community.general.git_config'
 $ ansible-doc git_config
 ```
+
+aqui
 
 ## Ansible inventory
 An Ansible inventory is a list of the different nodes we would like to manage with Ansible. We must pass the inventory to the Ansible adhoc command or the Ansible playbook command.
